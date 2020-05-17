@@ -1,0 +1,164 @@
+<!-- 
+		Name:  Mutasem Alhariri
+		Date:  12/01/2019
+		Class: CSCI2447, Javascript Fundamentals
+		Project 7
+ -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Whack-A-Mole (CSCI2447)</title>
+    
+    <!-- CSS styles: This is for me to worry about; not you. -->
+	<link href="css/game.css" rel="stylesheet" />
+    <script src="js/jquery-3.4.1.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script>
+	var firstName;
+	var score = 0;
+	var remainingTime = 30;
+	var timer;
+	var newTurkey;
+	var xPos;
+	var yPos;
+	var count = 0;
+	
+	$(document).ready(function(){
+	        setPage();
+	       firstName=prompt("Please enter your name","");
+		   
+	       $("#content p").prepend("Happy Thanksgiving "+firstName+"! Are you ready to whack some Turkeys? ");
+		   /*
+		   makes the start button clickable for one time 
+		   if clicked the game will begin
+		   */
+	       $("#start_button").click(function(){
+		   beginGame(); 
+           if(this){
+		   $(this).off();
+		   }		   
+		   });
+		   /*
+		   Makes the images clickable 
+		   if an image clicked, the image will disappear and the score will increase by one
+		   */
+		   $('#gamespace').on("click","img", function(){	   
+		   updateScore();	
+           	   
+            $(this).remove();  
+		   });
+		   
+		   
+	});
+	/*
+	Sets the background image and the styles of the page elements
+	*/
+	 function setPage(){
+	       $("#gamespace").css("background-color","#d8c100");
+		   $("html").css("backgroundImage" , "url(img/pat.jpg)");
+	       $("#content").css("background-color","#750000");
+		   $("#content h1").css("color","#d8c100");
+		   $("#content p").css({color: "white" , fontWeight : "bold"});	 
+	 };
+	 /*
+	 To start the game 
+	 */
+	function beginGame(){
+	addTurkey();
+	updatTime();	
+	};
+	
+	/*
+	Shows the timer and sets up its style
+	makes the timer count down 
+	*/
+	function updatTime(){
+	$("#timer").fadeIn();
+	$("#timer").text(remainingTime + " seconds left");
+	$("#timer").css("color","#d8c100");
+	if (remainingTime > 0) {
+	timer = setTimeout("updatTime()", 1000);	
+	} else {
+	clearTimeout(timer);
+	
+    $("#gamespace").off("click","img");
+		   
+	}		
+	remainingTime-- ;
+	};
+	
+	/*
+	Adds new image to the game space at random time and location
+	while the time is not equal to zero 
+	When time has run out, all images will be removed and an alert will show the score
+	rereshes the page to start a new game 
+	*/
+	function addTurkey() {
+	var xPos = x_coordinate();
+	var yPos = y_coordinate();
+	var image = "#"+count;
+	var rand = Math.floor(Math.random()*2000);
+	$("#gamespace").append('<img id= "'+count+'" src="img/turkey.png" style= "left: ' + xPos +'px; top: '+ yPos + 'px ;" alt="Turkey image">');
+	count++;
+	if(remainingTime >= 0){
+	newTurkey = setTimeout("addTurkey()",Math.floor(Math.random()*2000));
+	$("#gamespace").find(image).delay(rand).fadeOut();
+	}
+	else{
+	clearTimeout(newTurkey);
+	$("#gamespace img").remove();
+	alert("Time is up!! Your score is: " +score);
+	location.reload(true);
+	}
+	};
+	
+	/*
+	creats a random number between 0 and 275
+	*/
+	function y_coordinate() {
+	 return Math.floor(Math.random()*275);
+	};
+	
+	/*
+	creats a random number between 0 and 535
+	*/
+	function x_coordinate() {
+	 return Math.floor(Math.random()*535);
+	};
+	
+	/*
+	Increases the score by one and display the new score on the screen
+	*/
+	function updateScore(){
+	score++;
+	$("#score").text(score + " pts");
+	$("#score").css("color", "#d8c100");
+	};
+	
+	</script>
+  </head>
+  <body>
+
+	<div id="content">
+
+		<h1>Whack-A-Turkey</h1>
+		
+		<p>After clicking "start", you will have 30 seconds to click
+		as many turkeys as you can. The turkeys appear randomly so be ready! </p>
+		
+		<div id="controls">
+			<span id="score">0 pts</span>
+			<button type="button" id="start_button">Start!</button>
+		</div>
+		
+		<div id="timer">30 seconds left</div>
+		
+		<div id="gamespace">
+			
+		</div>
+		
+	</div>
+  </body>
+</html>
